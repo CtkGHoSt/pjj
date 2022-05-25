@@ -14,6 +14,18 @@ class Pjj:
             res += '.'
         return res, None if res == split_string else split_string[len(res)+1:]
 
+    @staticmethod
+    def _get_re_key(key, tmp_obj):
+        re_key = ['?', '*']
+        for rk in re_key:
+            if key.find(rk) > 0 and key[key.find(rk)-1]!='\\':
+                rk_index = key.find(rk)
+                key = key[:rk_index] + r'\S' + key[rk_index:]
+        _ = list(filter(lambda x: re.fullmatch(key, x) is not None,tmp_obj.keys()))
+        if len(_) != 1:
+            raise IndexError('key not found：{}/{}'.format(key, tmp_obj.keys()))
+        return _[0]
+
     def _get_value(self, key, tail, tmp_obj):
         if isinstance(tmp_obj, list):
             if key == '#':
@@ -23,21 +35,15 @@ class Pjj:
             try:
                 return tmp_obj[int(key)]
             except ValueError:
-                return [ i[key] for i in tmp_obj]
+                return [ i[self._get_re_key(key, i)] for i in tmp_obj]
         
-        re_key = ['?', '*']
-        for rk in re_key:
-            if key.find(rk) > 0 and key[key.find(rk)-1]!='\\':
-                rk_index = key.find(rk)
-                key = key[:rk_index] + r'\S' + key[rk_index:]
-        _ = list(filter(lambda x: re.fullmatch(key, x) is not None,tmp_obj.keys()))
-        if len(_) != 1:
-            raise IndexError('key not found：{}/{}'.format(key, tmp_obj.keys()))
-        return tmp_obj[_[0]]
+        re_key = self._get_re_key(key, tmp_obj)
+        return tmp_obj[re_key]
 
     def make_res(self):
         head, tail = self._split(self.base_string)
         tmp_obj = json.loads(self.json_obj)
+        self._json = json.loads(self.json_obj)
         while True:
             res = self._get_value(head, tail, tmp_obj)
             if tail is None:
