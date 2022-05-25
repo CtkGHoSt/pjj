@@ -39,7 +39,7 @@ class Pjj:
         eval(params)不够安全
         '''
         logical = [r'[&&]+', r'[||]+']
-        comparison = [r'>[=]?', r'<[=]?', r'[!,=]?=']
+        comparison = [r'[>,<][=]?', r'[!,=]?=']
         pp = [params,]
         cache = list()
         new_pp = list()
