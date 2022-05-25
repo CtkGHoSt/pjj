@@ -12,7 +12,12 @@ test_json = '''
     "mid":{"m":1, "i":2, "d":3}, 
     "tail":[11,22,33], 
     "test.abc":"success", 
-    "mmm":[{"a1":"A", "b1":"B"}, {"a1":"C", "b1":"D"}]
+    "mmm":[{"a1":"A", "b1":"B"}, {"a1":"C", "b1":"D"}],
+    "filter": [
+        {"name":"judy", "age":24},
+        {"name":"tom", "age":30},
+        {"name":"jerry", "age":28}
+    ]
 }
 ''' 
 
@@ -54,6 +59,19 @@ print(Pjj('mmm.1.a1', test_json).res)
 #  ---------string escape-------
 print(Pjj('test\.abc', test_json).res)
 # result: "success"
+
+# ---------list query-----------
+print(Pjj('filter.#(name=="judy").age', test_json).res)
+# result: "[24]"
+
+Pjj('filter.#(age>26).name', test_json).res
+# result: ['tom', 'jerry']
+
+Pjj('filter.#(age>26&&name=="tom")', test_json).res
+# result: [{'name': 'tom', 'age': 30}]
+
+Pjj('filter.#(age>29||age<=25)', test_json).res
+# result: [{'name': 'judy', 'age': 24}, {'name': 'tom', 'age': 30}]
 ```
 
 ## reference
