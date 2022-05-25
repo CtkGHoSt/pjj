@@ -42,6 +42,9 @@ print(Pjj('tail.0', test_json).res)
 print(Pjj('mmm.#', test_json).res)
 # result: 3
 
+print(Pjj('mmm.b?', test_json).res)
+# result: ["B", "D"]
+
 print(Pjj('mmm.#.a1', test_json).res)
 # result: ["A", "C"]
 
