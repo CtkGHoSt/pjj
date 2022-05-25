@@ -49,3 +49,6 @@ print(Pjj('mmm.#.a1', test_json).res)
 print(Pjj('test\.abc', test_json).res)
 # result: "success"
 ```
+
+## reference
+https://github.com/tidwall/jj
