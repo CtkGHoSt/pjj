@@ -45,6 +45,9 @@ print(Pjj('mmm.#', test_json).res)
 print(Pjj('mmm.#.a1', test_json).res)
 # result: ["A", "C"]
 
+print(Pjj('mmm.1.a1', test_json).res)
+# result: "C"
+
 #  ---------string escape-------
 print(Pjj('test\.abc', test_json).res)
 # result: "success"
