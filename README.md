@@ -74,5 +74,12 @@ print(Pjj('filter.#(age>29||age<=25)', test_json).res)
 # result: [{'name': 'judy', 'age': 24}, {'name': 'tom', 'age': 30}]
 ```
 
+## TODO
+空输入返回完整对象
+~~字典列表筛选~~
+数字列表筛选
+
+## BUG
+
 ## reference
 https://github.com/tidwall/jj
