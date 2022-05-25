@@ -6,7 +6,15 @@ JJ provides a fast and simple way to retrieve values from JSON documents.
 ```
 from pjj import Pjj
 
-test_json = '{"top":"a", "mid":{"m":1, "i":2, "d":3}, "tail":[11,22,33], "test.abc":"success", "mmm":[{"a1":"A", "b1":"B"}, {"a1":"C", "b1":"D"}]}'
+test_json = '''
+{
+    "top":"a", 
+    "mid":{"m":1, "i":2, "d":3}, 
+    "tail":[11,22,33], 
+    "test.abc":"success", 
+    "mmm":[{"a1":"A", "b1":"B"}, {"a1":"C", "b1":"D"}]
+}
+''' 
 
 # ------------basis-------------
 print(Pjj('top', test_json).res)
