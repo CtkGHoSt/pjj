@@ -64,13 +64,13 @@ print(Pjj('test\.abc', test_json).res)
 print(Pjj('filter.#(name=="judy").age', test_json).res)
 # result: "[24]"
 
-Pjj('filter.#(age>26).name', test_json).res
+print(Pjj('filter.#(age>26).name', test_json).res)
 # result: ['tom', 'jerry']
 
-Pjj('filter.#(age>26&&name=="tom")', test_json).res
+print(Pjj('filter.#(age>26&&name=="tom")', test_json).res)
 # result: [{'name': 'tom', 'age': 30}]
 
-Pjj('filter.#(age>29||age<=25)', test_json).res
+print(Pjj('filter.#(age>29||age<=25)', test_json).res)
 # result: [{'name': 'judy', 'age': 24}, {'name': 'tom', 'age': 30}]
 ```
 
