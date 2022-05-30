@@ -111,6 +111,9 @@ class Pjj:
         head, tail = self._split(self.base_string)
         tmp_obj = json.loads(self.json_obj)
         self._json = json.loads(self.json_obj)
+        if len(self.base_string) == 0:
+            self.res = self._json
+            return
         while True:
             res = self._get_value(head, tail, tmp_obj)
             if tail is None:
