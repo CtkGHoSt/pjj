@@ -3,6 +3,9 @@ import re
 import json
 
 class Pjj:
+    class TooManyResults(Exception):
+        pass
+
     @staticmethod
     def _split(split_string):
         if len(split_string) == 0:
@@ -16,17 +19,26 @@ class Pjj:
             res += '.'
         return res, None if res == split_string else split_string[len(res)+1:]
 
-    @staticmethod
-    def _get_re_key(key, tmp_obj):
+    # @staticmethod
+    def _get_re_key(self, key, tmp_obj):
+        '''
+        匹配key中的通配符 ['?', '*']
+        '''
         re_key = ['?', '*']
-        for rk in re_key:
-            if key.find(rk) > 0 and key[key.find(rk)-1]!='\\':
-                rk_index = key.find(rk)
-                key = key[:rk_index] + r'\S' + key[rk_index:]
-        _ = list(filter(lambda x: re.fullmatch(key, x) is not None,tmp_obj.keys()))
-        if len(_) != 1:
+        for rk in re_key: # 匹配通配符  ['?', '*']
+            re_match_count = 0
+            re_start_index = [i.start() for i in re.finditer('\\'+rk, key)] # 获取通配符起始位
+            for rk_index in re_start_index:
+                if key[rk_index-1] == '\\': # 不匹配转义
+                    continue
+                key = key[:rk_index+re_match_count] + r'\S' + key[rk_index+re_match_count:]
+                re_match_count += 2
+        _ = list(filter(lambda x: re.fullmatch(key, x) is not None,tmp_obj.keys())) # 匹配所有key
+        if len(_) == 0:
             # raise IndexError('key not found：{}/{}'.format(key, tmp_obj.keys()))
             return None
+        elif len(_) > 1:
+            raise self.TooManyResults('{}'.format(_))
         return _[0]
     
     @staticmethod
@@ -43,7 +55,7 @@ class Pjj:
         pp = [params,]
         cache = list()
         new_pp = list()
-        for operator in logical + comparison: # 先处理逻辑运算符，再处理比较运算符
+        for operator in logical + comparison: # 先处理逻辑运算符，再处理比较运算符54
             new_pp = list()
             for i in pp:
                 re_list = re.findall(operator, i)
