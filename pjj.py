@@ -107,11 +107,13 @@ class Pjj:
         except KeyError:
             return None
 
-    def make_res(self):
-        head, tail = self._split(self.base_string)
+    def make_res(self, search_s=None):
+        if search_s is None:
+            search_s = self.base_string
+        head, tail = self._split(search_s)
         tmp_obj = json.loads(self.json_obj)
         self._json = json.loads(self.json_obj)
-        if len(self.base_string) == 0:
+        if len(search_s) == 0:
             self.res = self._json
             return
         while True:
@@ -127,5 +129,3 @@ class Pjj:
         self.base_string = search_s
         self.json_obj = json_obj
         self.make_res()
-
-    
