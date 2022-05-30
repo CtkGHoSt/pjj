@@ -28,6 +28,9 @@ print(Pjj('top', test_json).res)
 print(Pjj('mid', test_json).res)
 # result: {"m":1, "i":2, "d":3}
 
+print(Pjj('#', test_json).res)
+# result: ['top', 'mid', 'tail', 'test.abc', 'mmm', 'filter']
+
 #  ----------wildcard-----------
 print(Pjj('t?p', test_json).res)
 # result: "a"
