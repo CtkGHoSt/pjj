@@ -50,34 +50,61 @@ class Pjj:
 
         eval(params)不够安全
         '''
-        logical = [r'[&&]+', r'[||]+']
-        comparison = [r'[>,<][=]?', r'[!,=]?=']
+        logical = [r'[^\\]([&]{2})', r'[^\\]([|]{2})']
+        comparison = [r'[^\\]([>,<][=]?)', r'[^\\]([!,=]{1}=)']
+        # rreg = r'([^\\]([&]{2}))|([^\\]([|]{2}))|([^\\]([>,<][=]?))|([^\\]([!,=]{1}=))'
+        # base_params = params
+        # string_params_list = list()
+        # string_params_count = len(re.findall(r'".+?"', params))
+        # for i in range(string_params_count):
+        #     string_obj = list(re.finditer(r'".+?"', params))[0]
+        #     string_params_list.append(params[string_obj.start()+1:string_obj.end()-1])
+        #     params = params[:string_obj.start()] + 'string_params_list[{}]'.format(i) + params[string_obj.end():]
+        
         pp = [params,]
+        last_start = 0
         cache = list()
         new_pp = list()
-        for operator in logical + comparison: # 先处理逻辑运算符，再处理比较运算符54
-            new_pp = list()
-            for i in pp:
-                re_list = re.findall(operator, i)
-                if len(re_list) == 0:
-                    new_pp.append(i)
-                    continue
-                for j in re_list:
-                    cache = i.split(j)
-                new_pp += cache
-            pp = new_pp
-            cache = list()
+        # for operator in logical + comparison: # 先处理逻辑运算符，再处理比较运算符54
+        #     new_pp = list()
+        #     for i in pp:
+        #         re_list = re.findall(operator, i)
+        #         if len(re_list) == 0:
+        #             new_pp.append(i)
+        #             continue
+        #         for j in re_list:
+        #             cache = i.split(j)
+        #         new_pp += cache 
+        #     pp = new_pp
+        #     cache = list()
+        while True:
+            pass
+        for i in re.finditer('(([!,=]=)|([>,<]=?))', params):
+            pp.append(params[last_start:i.start()])
+            last_start = i.end()
+        pp.append(params[i.end():])
+        for param in pp:
+            if (param[0]!='"' and param[-1]!='"') or (param[0]=='"' and param[-1]=='"'):
+                new_pp.append(param)
+                if len(cache) != 0:
+                    params
+                continue
+            cache.append(param)
+        
         f_string = list(filter(lambda x:x not in list(tmp_obj.keys()),pp))
+        print(pp, f_string)
         for p in f_string:
             try:
                 float(p)
             except ValueError:
-                if not (p[0] == '"' and p[-1] == '"' or p[0] == "'" and p[-1] == "'"):
-                    raise ValueError(p)
+                # if not (p[0] == '"' and p[-1] == '"' or p[0] == "'" and p[-1] == "'"):
+                #     raise ValueError(p)
+                pass
 
         for key in tmp_obj.keys():
             params = params.replace(key, 'tmp_obj["{}"]'.format(key))
         params = params.replace('&&', ' and ').replace('||', ' or ')
+        print(params, eval(params))
         return eval(params)
 
     def _get_value(self, key, tail, tmp_obj):
