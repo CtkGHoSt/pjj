@@ -1,6 +1,16 @@
 # pjj
 PJJ provides a fast and simple way to retrieve values from JSON documents.
     
+
+## feature
+点连接字符串解析json
+> 支持：
+>     点连接查询
+>     通配符 ['?', '*'] 模糊查询
+>     # 符返回字典keys列表、列表长度
+>     字典条件查询
+
+
 ## use
 
 ```
