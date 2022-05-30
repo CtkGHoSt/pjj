@@ -30,7 +30,9 @@ test_json = '''
     ]
 }
 ''' 
-
+```
+基础使用：点连接返回值、#符号返回字典keys列表
+```
 # ------------basis-------------
 print(Pjj('top', test_json).res)
 # result: "a"
