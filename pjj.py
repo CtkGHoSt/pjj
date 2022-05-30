@@ -82,7 +82,6 @@ class Pjj:
 
     def _get_value(self, key, tail, tmp_obj):
         if isinstance(tmp_obj, list):
-            
             if key == '#':
                 if tail is None:
                     return len(tmp_obj)
@@ -100,7 +99,8 @@ class Pjj:
                     return [ i[self._get_re_key(key, i)] for i in tmp_obj]
                 except KeyError:
                     return None
-        
+        if key == '#':
+            return list(tmp_obj.keys())
         re_key = self._get_re_key(key, tmp_obj)
         try:
             return tmp_obj[re_key]
