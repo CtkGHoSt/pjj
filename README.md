@@ -31,7 +31,7 @@ test_json = '''
 }
 ''' 
 ```
-基础使用：点连接返回值、#符号返回字典keys列表
+**基础使用**：点连接返回值、#符号返回字典keys列表
 ```
 # ------------basis-------------
 print(Pjj('top', test_json).res)
@@ -40,9 +40,14 @@ print(Pjj('top', test_json).res)
 print(Pjj('mid', test_json).res)
 # result: {"m":1, "i":2, "d":3}
 
+print(Pjj('mid.m', test_json).res)
+# result: 1
+
 print(Pjj('#', test_json).res)
 # result: ['top', 'mid', 'tail', 'test.abc', 'mmm', 'filter']
-
+``` 
+**通配符**
+```
 #  ----------wildcard-----------
 print(Pjj('t?p', test_json).res)
 # result: "a"
@@ -50,20 +55,18 @@ print(Pjj('t?p', test_json).res)
 print(Pjj('top*', test_json).res)
 # result: "a"
 
-# -------point connection-------
-print(Pjj('mid.m', test_json).res)
-# result: 1
-
+print(Pjj('f*', test_json).res)
+# result: [{'name': 'judy', 'age': 24}, {'name': 'tom', 'age': 30}, {'name': 'jerry', 'age': 28}]
+```
+**列表**
+```
 # ---------index based----------
 print(Pjj('tail.0', test_json).res)
 # result: 11
 
-# -------------list-------------
+# ----------list length---------
 print(Pjj('mmm.#', test_json).res)
 # result: 3
-
-print(Pjj('mmm.b?', test_json).res)
-# result: ["B", "D"]
 
 print(Pjj('mmm.#.a1', test_json).res)
 # result: ["A", "C"]
@@ -71,10 +74,18 @@ print(Pjj('mmm.#.a1', test_json).res)
 print(Pjj('mmm.1.a1', test_json).res)
 # result: "C"
 
+# -----------wildcard-----------
+print(Pjj('mmm.b?', test_json).res)
+# result: ["B", "D"]
+```
+**转义字符**
+```
 #  ---------string escape-------
 print(Pjj('test\.abc', test_json).res)
 # result: "success"
-
+```
+**字典条件筛选**
+```
 # ---------list query-----------
 print(Pjj('filter.#(name=="judy").age', test_json).res)
 # result: "[24]"
