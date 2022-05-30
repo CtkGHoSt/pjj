@@ -112,7 +112,7 @@ print(Pjj("fil*.#(name!='judy').#(age>=30)", test_json).res)
 
 ## BUG
 - ~~下划线搭配通配符匹配不了、多个通配符匹配不了~~    
+- ~~如果对象带反斜杠会异常~~
 - **条件查询时如果匹配对象带比较运算符或者逻辑运算符会异常**
-- **如果对象带反斜杠会异常**
 ## reference
 https://github.com/tidwall/jj
