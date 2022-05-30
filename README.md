@@ -78,6 +78,7 @@ print(Pjj('filter.#(age>29||age<=25)', test_json).res)
 空输入返回完整对象  
 ~~字典列表筛选~~  
 数字列表筛选  
+下划线搭配通配符匹配不了  
 
 ## BUG
 
