@@ -1,6 +1,7 @@
 
 import re
 import json
+from icecream import ic
 
 class Pjj:
     class TooManyResults(Exception):
@@ -51,6 +52,7 @@ class Pjj:
         eval(params)不够安全
         '''
 
+        # 先处理空字符串 
         pp = list()
         string_idx = 0
         count = 0
@@ -58,31 +60,35 @@ class Pjj:
         # i=0
         for i in re.finditer(r'[^\\]""', params):
             if count%2 != 1:
-                pp.append(params[string_idx:i.start()+1]+'string_params_list[{}]'.format(len(string_params_list)))
+                # pp.append(params[string_idx:i.start()+1]+'string_params_list[{}]'.format(len(string_params_list)))
+                pp.append(params[string_idx:i.start()+1]+'{{{}}}'.format(len(string_params_list)))
                 string_params_list.append('""')
             string_idx = i.end()
             count +=1
             pp.append(params[i.end():])
         if len(pp)!=0:
             params = ''.join(pp)
+        # 处理非空字符串
         pp = list()
         string_idx = 0
         count = 0
         if re.search(r'[^\\"]"', params) is not None:
-            for i in re.finditer(r'[^\\"]"', params):
+            for i in re.finditer(r'[^\\]"', params):
                 if count%2 != 1:
-                    pp.append(params[string_idx:i.start()+1])
+                    pp.append(params[string_idx:i.start()+1]) # 没问题
+                    string_idx = i.start()+1
                 else:
-                    string_params_list.append(params[string_idx:i.start()+1])
-                    pp.append('string_params_list[{}]'.format(len(string_params_list)-1))
-                string_idx = i.end()
+                    string_params_list.append(params[string_idx:i.end()])# 没问题
+                    pp.append('{{{}}}'.format(len(string_params_list)-1))
+                    string_idx = i.end()
                 count +=1
             if count %2 != 1:
                 pp.append(params[i.end():])
             else:
-                string_params_list.append(params[i.end():])
-                pp.append('string_params_list[{}]'.format(len(string_params_list)-1))
-        params = ''.join(pp)
+                string_params_list.append(params[i.end()+1:])
+                pp.append('{{{}}}'.format(len(string_params_list)-1))
+            params = ''.join(pp)
+        # 以运算符分割params
         pp = list()
         last_start = 0
         for i in re.finditer('([|]{2})|([&]{2})|(([!,=]=)|([>,<]=?))', params):
@@ -91,19 +97,18 @@ class Pjj:
             last_start = i.end()
         pp.append(params[i.end():])
         f_string = list(filter(lambda x:x not in list(tmp_obj.keys()),pp))
+        # 判断输入的参数是否只为运算符、tmp_obj key、字符串
         for p in f_string:
             try:
                 float(p)
             except ValueError:
-                # if not (p[0] == '"' and p[-1] == '"' or p[0] == "'" and p[-1] == "'"):
-                #     raise ValueError(p)
-                pass
-        
-        print(params, string_params_list)
+                if re.match(r'{\d}', p) is None and  re.match('([|]{2})|([&]{2})|(([!,=]=)|([>,<]=?))', p) is None:
+                    raise ValueError(p)
+        # 格式化params为可执行语句
         for key in tmp_obj.keys():
             params = params.replace(key, 'tmp_obj["{}"]'.format(key))
         params = params.replace('&&', ' and ').replace('||', ' or ')
-        
+        params = params.format(*string_params_list)
         return eval(params)
 
     def _get_value(self, key, tail, tmp_obj):
