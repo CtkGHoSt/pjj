@@ -1,6 +1,7 @@
 
 import re
 import json
+from icecream import ic
 
 class Pjj:
     class TooManyResults(Exception):
@@ -50,34 +51,64 @@ class Pjj:
 
         eval(params)不够安全
         '''
-        logical = [r'[&&]+', r'[||]+']
-        comparison = [r'[>,<][=]?', r'[!,=]?=']
-        pp = [params,]
-        cache = list()
-        new_pp = list()
-        for operator in logical + comparison: # 先处理逻辑运算符，再处理比较运算符54
-            new_pp = list()
-            for i in pp:
-                re_list = re.findall(operator, i)
-                if len(re_list) == 0:
-                    new_pp.append(i)
-                    continue
-                for j in re_list:
-                    cache = i.split(j)
-                new_pp += cache
-            pp = new_pp
-            cache = list()
+
+        # 先处理空字符串 
+        pp = list()
+        string_idx = 0
+        count = 0
+        string_params_list = list()
+        # i=0
+        for i in re.finditer(r'[^\\]""', params):
+            if count%2 != 1:
+                # pp.append(params[string_idx:i.start()+1]+'string_params_list[{}]'.format(len(string_params_list)))
+                pp.append(params[string_idx:i.start()+1]+'{{{}}}'.format(len(string_params_list)))
+                string_params_list.append('""')
+            string_idx = i.end()
+            count +=1
+            pp.append(params[i.end():])
+        if len(pp)!=0:
+            params = ''.join(pp)
+        # 处理非空字符串
+        pp = list()
+        string_idx = 0
+        count = 0
+        if re.search(r'[^\\"]"', params) is not None:
+            for i in re.finditer(r'[^\\]"', params):
+                if count%2 != 1:
+                    pp.append(params[string_idx:i.start()+1]) # 没问题
+                    string_idx = i.start()+1
+                else:
+                    string_params_list.append(params[string_idx:i.end()])# 没问题
+                    pp.append('{{{}}}'.format(len(string_params_list)-1))
+                    string_idx = i.end()
+                count +=1
+            if count %2 != 1:
+                pp.append(params[i.end():])
+            else:
+                string_params_list.append(params[i.end()+1:])
+                pp.append('{{{}}}'.format(len(string_params_list)-1))
+            params = ''.join(pp)
+        # 以运算符分割params
+        pp = list()
+        last_start = 0
+        for i in re.finditer('([|]{2})|([&]{2})|(([!,=]=)|([>,<]=?))', params):
+            pp.append(params[last_start:i.start()])
+            pp.append(params[i.start():i.end()])
+            last_start = i.end()
+        pp.append(params[i.end():])
         f_string = list(filter(lambda x:x not in list(tmp_obj.keys()),pp))
+        # 判断输入的参数是否只为运算符、tmp_obj key、字符串
         for p in f_string:
             try:
                 float(p)
             except ValueError:
-                if not (p[0] == '"' and p[-1] == '"' or p[0] == "'" and p[-1] == "'"):
+                if re.match(r'{\d}', p) is None and  re.match('([|]{2})|([&]{2})|(([!,=]=)|([>,<]=?))', p) is None:
                     raise ValueError(p)
-
+        # 格式化params为可执行语句
         for key in tmp_obj.keys():
             params = params.replace(key, 'tmp_obj["{}"]'.format(key))
         params = params.replace('&&', ' and ').replace('||', ' or ')
+        params = params.format(*string_params_list)
         return eval(params)
 
     def _get_value(self, key, tail, tmp_obj):
