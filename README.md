@@ -2,7 +2,7 @@
 PJJ provides a fast and simple way to retrieve values from JSON documents.
     
 
-## feature
+## Feature
 点连接字符串解析json
 支持：    
 - 点连接查询     
@@ -11,7 +11,7 @@ PJJ provides a fast and simple way to retrieve values from JSON documents.
 - 字典条件查询     
 
 
-## use
+## Usage
 
 ```
 from pjj import Pjj
@@ -111,10 +111,14 @@ print(Pjj('f*.#(name=="\\"<c>\\"")', test_json).res)
 - ~~空输入返回完整对象~~    
 - ~~字典列表筛选~~  
 - 数字列表筛选  
-- ~~下划线搭配通配符匹配不了、多个通配符匹配不了~~     
-- **条件查询时如果匹配对象带比较运算符或者逻辑运算符会异常**
+ 
+
 
 ## BUG
-
-## reference
+- ~~下划线搭配通配符匹配不了、多个通配符匹配不了~~    
+- ~~如果对象带反斜杠会异常~~
+- ~~条件查询时如果匹配对象带比较运算符或者逻辑运算符会异常~~    
+- 如果列表下的对象key为整数，只能返回索引对象不能返回列表key对应的value列表
+- 条件筛选：如果对象key为浮点数会异常
+## Reference
 https://github.com/tidwall/jj
