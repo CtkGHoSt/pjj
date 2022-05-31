@@ -111,25 +111,29 @@ class Pjj:
         params = params.format(*string_params_list)
         return eval(params)
 
+    def __get_list_value(self, key, tail, tmp_obj):
+        '''处理对象为列表的'''
+        if key == '#':
+            if tail is None:
+                return len(tmp_obj)
+            return tmp_obj
+        try:
+            return tmp_obj[int(key)] # 返回索引下的对象
+        except IndexError:
+            return None
+        except ValueError: # key不为整形
+            try:
+                if re.fullmatch(r'#(\S+)', key): # 列表条件筛选
+                    exec_string = re.fullmatch(r'#(\S*)', key).group()[2:-1]
+                    tmp_obj = [i for i in tmp_obj if self._judge_eval_params(exec_string, i)]
+                    return tmp_obj
+                return [ i[self._get_re_key(key, i)] for i in tmp_obj] # 返回列表下对象key对应的value
+            except KeyError:
+                return None
+
     def _get_value(self, key, tail, tmp_obj):
         if isinstance(tmp_obj, list):
-            if key == '#':
-                if tail is None:
-                    return len(tmp_obj)
-                return tmp_obj
-            try:
-                return tmp_obj[int(key)]
-            except IndexError:
-                return None
-            except ValueError: # key 不为整型
-                try:
-                    if re.fullmatch(r'#(\S+)', key):
-                        exec_string = re.fullmatch(r'#(\S*)', key).group()[2:-1]
-                        tmp_obj = [i for i in tmp_obj if self._judge_eval_params(exec_string, i)]
-                        return tmp_obj
-                    return [ i[self._get_re_key(key, i)] for i in tmp_obj]
-                except KeyError:
-                    return None
+            return self.__get_list_value(key, tail, tmp_obj)
         if key == '#':
             return list(tmp_obj.keys())
         re_key = self._get_re_key(key, tmp_obj)
