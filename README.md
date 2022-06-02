@@ -112,7 +112,7 @@ print(Pjj('filter.#(age>26&&name=="tom")', test_json).res)
 # result: [{'name': 'tom', 'age': 30}]
 
 print(Pjj('filter.#(age>29||age<=25)', test_json).res)
-# result: [{'name': 'judy', 'age': 24}, {'name': 'tom', 'age': 30}]
+# result: [{'name': 'judy', 'age': 24}, {'name': 'tom', 'age': 30}, {'name': '"<c>"', 'age': 24}]
 
 print(Pjj('fil*.#(name!="judy").#(age>=30)', test_json).res)
 # result: [{'name': 'tom', 'age': 30}]
