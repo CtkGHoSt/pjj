@@ -71,7 +71,7 @@ print(Pjj('tail.0', test_json).res)
 
 # ----------list length---------
 print(Pjj('mmm.#', test_json).res)
-# result: 3
+# result: 2
 
 print(Pjj('mmm.#.a1', test_json).res)
 # result: ["A", "C"]
