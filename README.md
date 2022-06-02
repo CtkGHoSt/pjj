@@ -57,10 +57,10 @@ print(Pjj('#', test_json).res)
 print(Pjj('t?p', test_json).res)
 # result: "a"
 
-print(Pjj('top*', test_json).res)
+print(Pjj('to*', test_json).res)
 # result: "a"
 
-print(Pjj('f*', test_json).res)
+print(Pjj('f*r', test_json).res)
 # result: [{'name': 'judy', 'age': 24}, {'name': 'tom', 'age': 30}, {'name': 'jerry', 'age': 28}]
 ```
 #### **列表**（索引和对象key冲突使用双引号强制字符串检索）
