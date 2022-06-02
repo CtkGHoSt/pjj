@@ -11,7 +11,7 @@ PJJ provides a fast and simple way to retrieve values from JSON documents.
 - 通配符 ['?', '*'] 模糊查询      
 - #符返回字典keys列表、列表长度      
 - 字典条件查询     
-- 双引号强制字符串查询（列表内对象key和索引冲突时，默认返回索引的对象，[双引号后返回该key的列表](https://github.com/CtkGHoSt/pjj/edit/dev/README.md#%E5%88%97%E8%A1%A8%E7%B4%A2%E5%BC%95%E5%92%8C%E5%AF%B9%E8%B1%A1key%E5%86%B2%E7%AA%81%E4%BD%BF%E7%94%A8%E5%8F%8C%E5%BC%95%E5%8F%B7%E5%BC%BA%E5%88%B6%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%A3%80%E7%B4%A2)）
+- 双引号强制字符串查询（列表内对象key和索引冲突时，默认返回索引的对象，[双引号后返回该key的列表](https://github.com/CtkGHoSt/pjj/blob/main/README.md#%E8%BD%AC%E4%B9%89%E5%AD%97%E7%AC%A6%E5%92%8C%E5%BC%BA%E5%88%B6%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%A3%80%E7%B4%A2)）
 
 
 ## Usage
@@ -49,7 +49,7 @@ print(Pjj('mid.m', test_json).res)
 # result: 1
 
 print(Pjj('#', test_json).res)
-# result: ['top', 'mid', 'tail', 'test.abc', 'mmm', 'filter']
+# result: ['top', 'mid', 'tail', 'test.abc', 'mmm', 'force_string', 'filter']
 ``` 
 #### **通配符**
 ```
@@ -57,11 +57,11 @@ print(Pjj('#', test_json).res)
 print(Pjj('t?p', test_json).res)
 # result: "a"
 
-print(Pjj('top*', test_json).res)
+print(Pjj('to*', test_json).res)
 # result: "a"
 
-print(Pjj('f*', test_json).res)
-# result: [{'name': 'judy', 'age': 24}, {'name': 'tom', 'age': 30}, {'name': 'jerry', 'age': 28}]
+print(Pjj('f*r', test_json).res)
+# result: [{'name': 'judy', 'age': 24}, {'name': 'tom', 'age': 30}, {'name': 'jerry', 'age': 28}, {'name': '"<c>"', 'age': 24}]
 ```
 #### **列表**（索引和对象key冲突使用双引号强制字符串检索）
 ```
@@ -71,7 +71,7 @@ print(Pjj('tail.0', test_json).res)
 
 # ----------list length---------
 print(Pjj('mmm.#', test_json).res)
-# result: 3
+# result: 2
 
 print(Pjj('mmm.#.a1', test_json).res)
 # result: ["A", "C"]
@@ -82,23 +82,22 @@ print(Pjj('mmm.1.a1', test_json).res)
 # -----------wildcard-----------
 print(Pjj('mmm.b?', test_json).res)
 # result: ["B", "D"]
-
-# ---------force string--------
-print(Pjj('force_string.1',test_json).res)
-# result: {'1': 'b1', '2': 'b2'}
-
-print(Pjj('force_string."1"',test_json).res)
-# result: ['a1', 'b1']
-
 ```
-#### **转义字符**
+#### **转义字符和强制字符串检索**
 ```
 #  ---------string escape-------
 print(Pjj('test\.abc', test_json).res)
 # result: "success"
 
+# ---------force string--------
 print(Pjj('"test.abc"', test_json).res)
 # result: "success"
+
+print(Pjj('force_string.1',test_json).res)
+# result: {'1': 'b1', '2': 'b2'}
+
+print(Pjj('force_string."1"',test_json).res)
+# result: ['a1', 'b1']
 ```
 #### **字典条件筛选**
 ```
@@ -113,12 +112,12 @@ print(Pjj('filter.#(age>26&&name=="tom")', test_json).res)
 # result: [{'name': 'tom', 'age': 30}]
 
 print(Pjj('filter.#(age>29||age<=25)', test_json).res)
-# result: [{'name': 'judy', 'age': 24}, {'name': 'tom', 'age': 30}]
+# result: [{'name': 'judy', 'age': 24}, {'name': 'tom', 'age': 30}, {'name': '"<c>"', 'age': 24}]
 
-print(Pjj("fil*.#(name!='judy').#(age>=30)", test_json).res)
+print(Pjj('fil*.#(name!="judy").#(age>=30)', test_json).res)
 # result: [{'name': 'tom', 'age': 30}]
 
-print(Pjj('f*.#(name=="\\"<c>\\"")', test_json).res)
+print(Pjj('fil*.#(name=="\\"<c>\\"")', test_json).res)
 # result: [{'name': '"<c>"', 'age': 24}]
 ```
 
@@ -126,6 +125,7 @@ print(Pjj('f*.#(name=="\\"<c>\\"")', test_json).res)
 - ~~空输入返回完整对象~~    
 - ~~字典列表筛选~~  
 - 数字列表筛选  
+- 用法兼容json库
  
 
 
