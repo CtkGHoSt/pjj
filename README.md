@@ -49,7 +49,7 @@ print(Pjj('mid.m', test_json).res)
 # result: 1
 
 print(Pjj('#', test_json).res)
-# result: ['top', 'mid', 'tail', 'test.abc', 'mmm', 'filter']
+# result: ['top', 'mid', 'tail', 'test.abc', 'mmm', 'force_string', 'filter']
 ``` 
 #### **通配符**
 ```
