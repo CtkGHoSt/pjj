@@ -1,4 +1,6 @@
 # pjj
+Pjj可以从json文档中快速检索返回内容，支持模糊查询
+
 PJJ provides a fast and simple way to retrieve values from JSON documents.
     
 
