@@ -116,10 +116,6 @@ class Pjj:
         params = params.replace('&&', ' and ').replace('||', ' or ')
         params = params.format(*string_params_list)
         return eval(params)
-    
-    def __format_key_type(key)->str:
-        '''判断输入的key类型，如果用双引号修饰强制为str类型'''
-        pass
 
     def __get_list_value(self, key, tail, tmp_obj):
         '''处理对象为列表的'''
