@@ -11,6 +11,13 @@ class Pjj:
         if len(split_string) == 0:
             return '', None
         split_list = split_string.split('.')
+        if split_list[0][0] == '"': # 是否强制字符串
+            if split_list[0][-1] != '"':
+                try: # 拼合左引号
+                    idx = list(map(lambda x:x[-1]=='"', split_list[0:])).index(True)
+                    split_list = ['.'.join(split_list[:idx+1]),] + split_list[idx+1:]
+                except ValueError: # 没有匹配的引号
+                    pass
         res = ''
         for item in split_list:
             res += item
@@ -109,6 +116,10 @@ class Pjj:
         params = params.replace('&&', ' and ').replace('||', ' or ')
         params = params.format(*string_params_list)
         return eval(params)
+    
+    def __format_key_type(key)->str:
+        '''判断输入的key类型，如果用双引号修饰强制为str类型'''
+        pass
 
     def __get_list_value(self, key, tail, tmp_obj):
         '''处理对象为列表的'''
@@ -117,6 +128,9 @@ class Pjj:
                 return len(tmp_obj)
             return tmp_obj
         try:
+            if re.fullmatch(r'^".*"$', key): # 判断是否强制输入字符串
+                key = key[1:-1]
+                raise ValueError # 强制输入为字符串
             return tmp_obj[int(key)] # 返回索引下的对象
         except IndexError:
             return None
@@ -133,6 +147,8 @@ class Pjj:
     def _get_value(self, key, tail, tmp_obj):
         if isinstance(tmp_obj, list):
             return self.__get_list_value(key, tail, tmp_obj)
+        if re.fullmatch(r'^".*"$', key): # 处理强制字符串
+            key = key[1:-1]
         if key == '#':
             return list(tmp_obj.keys())
         re_key = self._get_re_key(key, tmp_obj)
