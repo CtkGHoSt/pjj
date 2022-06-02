@@ -91,7 +91,7 @@ print(Pjj('force_string."1"',test_json).res)
 # result: ['a1', 'b1']
 
 ```
-#### **转义字符**
+#### **转义字符和强制字符串检索**
 ```
 #  ---------string escape-------
 print(Pjj('test\.abc', test_json).res)
