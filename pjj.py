@@ -159,25 +159,25 @@ class Pjj:
         except KeyError:
             return None
 
-    def make_res(self, search_s=None):
+    def search(self, search_s=None):
         if search_s is None:
             search_s = self.base_string
         head, tail = self._split(search_s)
         tmp_obj = copy.deepcopy(self._json)
         if len(search_s) == 0:
             self.res = self._json
-            return
+            return self.res
         while True:
             res = self._get_value(head, tail, tmp_obj)
             if tail is None:
                 break
             head, tail = self._split(tail)
             tmp_obj = res
-            
         self.res = res
+        return self.res
 
-    def __init__(self, search_s, json_or_dict):
-        self.base_string = search_s
+    def __init__(self,json_or_dict, search_s=None):
+        self.base_string = search_s if search_s is not None else ''
         if isinstance(json_or_dict, str):
             self.json_obj = json_or_dict
             self._json = json.loads(json_or_dict)
@@ -185,4 +185,4 @@ class Pjj:
             self._json = json_or_dict
         else:
             raise TypeError('json_or_dict must be str or dict or list')
-        self.make_res()
+        self.search()
