@@ -1,6 +1,7 @@
 
 import re
 import json
+import copy
 
 class Pjj:
     class TooManyResults(Exception):
@@ -40,7 +41,10 @@ class Pjj:
                     continue
                 key = key[:rk_index+re_match_count] + r'\S' + key[rk_index+re_match_count:]
                 re_match_count += 2
-        _ = list(filter(lambda x: re.fullmatch(key, x) is not None,tmp_obj.keys())) # 匹配所有key
+        try:
+            _ = list(filter(lambda x: re.fullmatch(key, x) is not None,tmp_obj.keys())) # 匹配所有key
+        except AttributeError:
+            return None
         if len(_) == 0:
             # raise IndexError('key not found：{}/{}'.format(key, tmp_obj.keys()))
             return None
@@ -148,6 +152,8 @@ class Pjj:
         if key == '#':
             return list(tmp_obj.keys())
         re_key = self._get_re_key(key, tmp_obj)
+        if re_key is None:
+            return None
         try:
             return tmp_obj[re_key]
         except KeyError:
@@ -157,8 +163,7 @@ class Pjj:
         if search_s is None:
             search_s = self.base_string
         head, tail = self._split(search_s)
-        tmp_obj = json.loads(self.json_obj)
-        self._json = json.loads(self.json_obj)
+        tmp_obj = copy.deepcopy(self._json)
         if len(search_s) == 0:
             self.res = self._json
             return
@@ -171,7 +176,13 @@ class Pjj:
             
         self.res = res
 
-    def __init__(self, search_s, json_obj):
+    def __init__(self, search_s, json_or_dict):
         self.base_string = search_s
-        self.json_obj = json_obj
+        if isinstance(json_or_dict, str):
+            self.json_obj = json_or_dict
+            self._json = json.loads(json_or_dict)
+        elif isinstance(json_or_dict, dict) or isinstance(json_or_dict, list):
+            self._json = json_or_dict
+        else:
+            raise TypeError('json_or_dict must be str or dict or list')
         self.make_res()
